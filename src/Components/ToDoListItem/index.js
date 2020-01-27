@@ -1,22 +1,31 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './style.css'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 
-const ToDoListItem = ({label, important = false}) => {
 
-    const style = {
-        color: important ? 'tomato' : 'black',
-        fontWeight: important ? 'bold' : 'normal',
-    };
+export default class ToDoListItem extends Component{
+    onLabelClick=()=>{
+        console.log(`click ${this.props.label}`)
+    }
 
-    return (
-        <span className="todo-list-item">
+    render() {
+    const {label , important=false}=this.props;
+
+        const style = {
+            color: important ? 'tomato' : 'black',
+            fontWeight: important ? 'bold' : 'normal',
+        };
+
+        return (
+            <span className="todo-list-item">
             <span
                 className="todo-list-item-label"
-                style={style }>
+                style={style }
+                onClick={this.onLabelClick}
+            >
                 {label}
             </span>
            <button type="button"
@@ -29,7 +38,6 @@ const ToDoListItem = ({label, important = false}) => {
       <FontAwesomeIcon icon={faTrash}/>
       </button>
         </span>
-    );
-};
-
-export default ToDoListItem;
+        );
+    };
+}
