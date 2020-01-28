@@ -7,35 +7,61 @@ import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 
 
 export default class ToDoListItem extends Component{
+    state = {
+        done: false,
+        important: false
+    };
+
     onLabelClick=()=>{
-        console.log(`click ${this.props.label}`)
-    }
+       this.setState(({done})=>{
+           return {
+               done: !done
+           };
+       });
+    };
+
+    onMarkImportant=()=>{
+        this.setState(({important})=>{
+            return {
+                important: !important
+            };
+        });
+    };
 
     render() {
-    const {label , important=false}=this.props;
+    const {label, onDeleted}=this.props;
+    const {done, important} = this.state;
 
-        const style = {
-            color: important ? 'tomato' : 'black',
-            fontWeight: important ? 'bold' : 'normal',
-        };
+    let classNames = 'todo-list-item';
+
+    if (done){
+        classNames += ' done';
+    }
+
+    if (important){
+        classNames += ' important';
+        console.log("important");
+    }
+
 
         return (
-            <span className="todo-list-item">
+            <span className={classNames}>
             <span
                 className="todo-list-item-label"
-                style={style }
                 onClick={this.onLabelClick}
             >
                 {label}
             </span>
            <button type="button"
+                   onClick={this.onMarkImportant}
                    className="btn btn-outline-success btn-sm float-right">
                <FontAwesomeIcon icon={faExclamation}/>
       </button>
 
       <button type="button"
+              onClick={onDeleted}
               className="btn btn-outline-danger btn-sm float-right" >
-      <FontAwesomeIcon icon={faTrash}/>
+      <FontAwesomeIcon icon={faTrash} />
       </button>
         </span>
         );
