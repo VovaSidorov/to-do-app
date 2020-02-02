@@ -14,7 +14,8 @@ export default class App extends Component{
             this.createToDoItem("Drink Coffe"),
             this.createToDoItem("Make Awesome App"),
             this.createToDoItem("Have a lunch"),
-        ]
+        ],
+        term:" "
     };
 
     createToDoItem(label){
@@ -80,17 +81,64 @@ export default class App extends Component{
             }
         });
     };
-    render(){
+
+    onTooggleAllFilter=()=>{
+        console.log("All");
+    };
+
+    onTooggleActiveFilter=()=>{
+        this.setState(({toDoData})=>{
+            const idx = toDoData.filter((el)=>el.done===false);
+            const newArray = [
+                ...idx
+            ];
+            return {
+                filter:newArray
+            }
+        });
+    };
+
+    onTooggleDoneFilter=()=>{
         const {toDoData} = this.state;
+            const idx = toDoData.filter((el)=>el.done);
+            const newArray = [
+                ...idx
+            ];
+            return {
+                toDoData:newArray
+            }
+
+    };
+    onLabelSearch=(term)=>{
+        this.setState({term});
+    };
+
+    search(items,term){
+        if(term.length===0){
+            return items;
+        }
+
+       return  items.filter((item)=>{
+            return item.label.toLowerCase.indexOf(term.toLowerCase())>-1;
+        })
+    }
+
+    render(){
+        const {toDoData,term} = this.state;
+
+        const visibleItems = this.search(toDoData,term);
+
         const doneCount = toDoData.filter((el)=>el.done).length;
         const todoCount = toDoData.length - doneCount;
         return (
             <div className="todo-app ">
                 <AppHeader todo={todoCount} done={doneCount}/>
-                <SearchPanel />
-                <ItemStatusFilter/>
+                <SearchPanel onLabelSearch={this.onLabelSearch}/>
+                <ItemStatusFilter onTooggleAllFilter={this.onTooggleAllFilter}
+                                  onTooggleActiveFilter={this.onTooggleActiveFilter}
+                                  onTooggleDoneFilter={this.onTooggleDoneFilter}/>
                 <ToDoList
-                    todos = {toDoData}
+                    todos = {visibleItems}
                     onDeleted = {this.deleteItem}
                     onTooggleDone={this.onTooggleDone}
                     onTooggleImportant={this.onTooggleImportant}
