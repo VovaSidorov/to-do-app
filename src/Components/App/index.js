@@ -15,7 +15,8 @@ export default class App extends Component{
             this.createToDoItem("Make Awesome App"),
             this.createToDoItem("Have a lunch"),
         ],
-        term:" "
+        term:" ",
+        filter:'active',
     };
 
     createToDoItem(label){
@@ -82,35 +83,24 @@ export default class App extends Component{
         });
     };
 
-    onTooggleAllFilter=()=>{
-        console.log("All");
-    };
+   filter(items,filter){
+       switch(filter){
+           case 'all':
+               return items;
+           case 'active':
+               return items.filter((item)=>!item.done);
+           case 'done':
+               return items.filter((item)=>item.done);
+           default:
+               return items;
+       }
+   }
 
-    onTooggleActiveFilter=()=>{
-        this.setState(({toDoData})=>{
-            const idx = toDoData.filter((el)=>el.done===false);
-            const newArray = [
-                ...idx
-            ];
-            return {
-                filter:newArray
-            }
-        });
-    };
-
-    onTooggleDoneFilter=()=>{
-        const {toDoData} = this.state;
-            const idx = toDoData.filter((el)=>el.done);
-            const newArray = [
-                ...idx
-            ];
-            return {
-                toDoData:newArray
-            }
-
-    };
     onLabelSearch=(term)=>{
         this.setState({term});
+    };
+    onFilterChange=(filter)=>{
+        this.setState({filter});
     };
 
     search(items,term){
@@ -119,14 +109,14 @@ export default class App extends Component{
         }
 
        return  items.filter((item)=>{
-            return item.label.toLowerCase.indexOf(term.toLowerCase())>-1;
+            return item.label.toLowerCase().indexOf(term.toLowerCase())>-1;
         })
     }
 
     render(){
-        const {toDoData,term} = this.state;
+        const {toDoData,term,filter} = this.state;
 
-        const visibleItems = this.search(toDoData,term);
+        const visibleItems = this.filter(this.search(toDoData,term),filter);
 
         const doneCount = toDoData.filter((el)=>el.done).length;
         const todoCount = toDoData.length - doneCount;
@@ -134,9 +124,8 @@ export default class App extends Component{
             <div className="todo-app ">
                 <AppHeader todo={todoCount} done={doneCount}/>
                 <SearchPanel onLabelSearch={this.onLabelSearch}/>
-                <ItemStatusFilter onTooggleAllFilter={this.onTooggleAllFilter}
-                                  onTooggleActiveFilter={this.onTooggleActiveFilter}
-                                  onTooggleDoneFilter={this.onTooggleDoneFilter}/>
+                <ItemStatusFilter filter={filter}
+                onFilterChange={this.onFilterChange}/>
                 <ToDoList
                     todos = {visibleItems}
                     onDeleted = {this.deleteItem}

@@ -2,20 +2,31 @@ import React, {Component} from 'react';
 import './style.css'
 
 export default class ItemStatusFilter extends Component{
+    buttos=[
+        {name:"all",label:'all'},
+        {name:"active",label:'Active'},
+        {name:"done",label:'Done'},
+    ];
     render() {
-        const {onTooggleAllFilter,onTooggleActiveFilter,onTooggleDoneFilter}=this.props;
+        const {filter,onFilterChange}=this.props;
+
+       const buttons = this.buttos.map(({name,label})=>{
+           const isActive = filter === name;
+           const clazz = isActive ? 'btn-info':"rtn-outline-secondary";
+           return (
+               <button type="button"
+                       className={`btn ${clazz}`}
+                        key={name}
+                       onClick={()=>onFilterChange(name)}
+               >
+                   {label}</button>
+           )
+       });
+
 
         return (
             <div className="btn-group d-flex align-items-end mb-3">
-                <button type="button"
-                        onClick={onTooggleAllFilter}
-                        className="btn btn-info">All</button>
-                <button type="button"
-                        onClick={onTooggleActiveFilter}
-                        className="btn btn-outline-secondary">Active</button>
-                <button type="button"
-                        onClick={onTooggleDoneFilter}
-                        className="btn btn-outline-secondary">Done</button>
+                {buttons}
             </div>
         );
     };
